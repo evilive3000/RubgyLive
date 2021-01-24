@@ -7,16 +7,17 @@ import {
   RugbyMatch
 } from "./types";
 import axios, {AxiosInstance} from "axios";
+import {UniqueIdsStorage} from "./storage";
 
 export class RugbyService {
   private client: AxiosInstance;
 
-  constructor(rapidApiKey: string) {
+  constructor() {
     this.client = axios.create({
       baseURL: 'https://rugby-live-data.p.rapidapi.com',
       timeout: 20000,
       headers: {
-        'x-rapidapi-key': rapidApiKey,
+        'x-rapidapi-key': process.env.TOKEN_RUGBY_API!,
         'x-rapidapi-host': 'rugby-live-data.p.rapidapi.com',
         // 'useQueryString': true
       }
@@ -55,5 +56,28 @@ export class RugbyService {
     }
 
     return fixtures;
+  }
+
+  async detectPlayedGames(): Promise<Set<number>> {
+    // достаем из хранилища id всех незавершенных матчей
+    const notStarted = new UniqueIdsStorage('not-started');
+    await notStarted.load();
+    const changed = new Set<number>();
+    const fixtures = await this.getAllFixtures();
+
+    for (const {id, status} of fixtures) {
+      // если матч завершился или отменен
+      if (["Result", "Cancelled"].includes(status)) {
+        // пытаемся удалить из локальной базы сохраненных
+        // если id там был, то запоминаем его
+        notStarted.del(id) && changed.add(id);
+      } else {
+        notStarted.add(id);
+      }
+    }
+
+    await notStarted.persist();
+
+    return changed;
   }
 }
