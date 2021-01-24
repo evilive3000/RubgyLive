@@ -9,10 +9,11 @@ RUN npm run build
 
 ##########################
 
-FROM node:14-alpine
+FROM node:15-alpine
 RUN mkdir -p /srv/app/dist
 COPY --from=builder /srv/app/dist/ /srv/app/dist/
 WORKDIR /srv/app
 COPY package*.json ./
-RUN npm install --only=prod
+RUN npm install --only=prod && npm cache clean --force
 COPY . .
+CMD npm run start:prod
