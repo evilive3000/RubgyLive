@@ -39,12 +39,10 @@ export class TelegaService {
     this.isListening = true;
     await this.bot.startPolling()
     this.bot.on('message', (msg) => {
-      console.log({msg});
       this.channels.add(msg.chat.id);
     });
     this._intervalId = setInterval(() => {
-      console.log(this.channels.list());
-      // this.channels.persist().catch(console.error)
+      this.channels.persist().catch(console.error)
     }, 3000);
   }
 
