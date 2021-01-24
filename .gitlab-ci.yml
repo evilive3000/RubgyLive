@@ -1,0 +1,47 @@
+#image: docker:19.03.8
+#
+#variables:
+#  DOCKER_DRIVER: overlay2
+#  TAG_LATEST: $CI_REGISTRY/$CI_PROJECT_PATH:latest
+#  TAG_SHA: $CI_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_SHORT_SHA
+#
+#stages:
+#  - build
+#  - deploy
+#
+#build-n-push:
+#  stage: build
+#  tags: [ pukan, docker ]
+#  only: [ master ]
+#  script:
+#    - docker build -t $TAG_LATEST .
+#    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+#    - docker tag $TAG_LATEST $TAG_SHA
+#    - docker push $TAG_LATEST
+#    - docker push $TAG_SHA
+#
+#deploy_stage:
+#  stage: deploy
+#  tags: [ gifer, production ]
+#  only: [ master ]
+#  script:
+#    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+#    - docker pull $TAG_SHA
+#    - docker stop $CI_PROJECT_PATH_SLUG || true
+#    - docker rm $CI_PROJECT_PATH_SLUG || true
+#    - docker run --detach
+#      --name $CI_PROJECT_PATH_SLUG
+#      --restart always
+#      --sysctl net.core.somaxconn=10000
+#      --add-host gifer-api-rs-0:88.198.51.200
+#      --add-host gifer-api-rs-1:94.130.11.84
+#      --add-host gifer-api-rs-2:62.112.9.10
+#      --publish $APP_PORT:$APP_PORT
+#      --env APP_PORT=$APP_PORT
+#      --env REDIS_PATH=$REDIS_PATH
+#      --env MYSTEM_PATH=/srv/mystem
+#      --env GIFER_MONGODB_URI=$GIFER_MONGODB_URI
+#      --env NATS_CID=$NATS_CID
+#      --env NATS_URL=$NATS_URL
+#      --env DEBUG=$DEBUG
+#      $TAG_SHA
