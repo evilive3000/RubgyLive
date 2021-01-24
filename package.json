@@ -1,7 +1,7 @@
 {
   "name": "rugby-live-data",
   "version": "1.0.0",
-  "description": "",
+  "description": "RugbyLive telegram bot",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
@@ -11,12 +11,12 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/evilive3000/RugbyLive"
   },
   "author": "evilive3000",
   "license": "ISC",
   "bugs": {
-    "url": ""
+    "url": "https://github.com/evilive3000/RugbyLive/issues"
   },
   "homepage": "",
   "dependencies": {
