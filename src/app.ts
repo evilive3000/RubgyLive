@@ -42,8 +42,8 @@ const App = (port: number, rugby: RugbyService, telega: TelegaService): Express 
       .catch(next);
   });
 
-  app.get('/test/:id', (req: Request, res: Response, next: NextFunction) => {
-    const {id = 80890} = req.params;
+  app.get('/test', (req: Request, res: Response, next: NextFunction) => {
+    const {id = 80890} = req.query;
     sampleMatch(id, rugby, telega)
       .then((data) => res.json(data))
       .catch(next);

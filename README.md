@@ -29,7 +29,6 @@ GOOGLE_APPLICATION_CREDENTIALS=
 
 ```http request
 GET /
-GET /test
-GET /test/:id
+GET /test?id=80980
 POST /1844c16378ad1aacf0a39a72b2423f29
 ```
