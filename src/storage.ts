@@ -6,9 +6,10 @@ export class UniqueIdsStorage {
   readonly db = admin.firestore();
   readonly name: string;
   private storage = new Set<number>();
+  private isDirty = false;
 
   constructor(name: string) {
-    this.name = `rugby/${name}`;
+    this.name = `rugby/${name}-json`;
   }
 
   list(): number[] {
@@ -16,22 +17,30 @@ export class UniqueIdsStorage {
   }
 
   async persist(): Promise<UniqueIdsStorage> {
-    await this.db.doc(this.name).set({ids: this.list()});
+    if (!this.isDirty) return this;
+
+    await this.db.doc(this.name).set({json: JSON.stringify(this.list())});
+
+    this.isDirty = false;
+
     return this;
   }
 
   async load(): Promise<void> {
     const doc = await this.db.doc(this.name).get();
-    const {ids} = doc.data() || {ids: []}
-    this.storage = new Set(ids);
+    this.storage = doc.exists ? new Set(JSON.parse(doc.data()!.json)) : new Set();
+    this.isDirty = false;
   }
 
   add(id: number): this {
+    this.isDirty ||= !this.storage.has(id)
     this.storage.add(id);
     return this;
   }
 
   del(id: number): boolean {
-    return this.storage.delete(id);
+    const deleted = this.storage.delete(id);
+    this.isDirty ||= deleted;
+    return deleted;
   }
 }
