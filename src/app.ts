@@ -14,6 +14,8 @@ async function checkMatches(rugby: RugbyService, telega: TelegaService) {
 
   matches.sort((a, b) => new Date(a.match.date).getTime() - new Date(b.match.date).getTime());
 
+  await telega.loadChannels();
+
   for (const match of matches) {
     await telega.publishMessage(formatMatch(match));
   }
@@ -21,7 +23,9 @@ async function checkMatches(rugby: RugbyService, telega: TelegaService) {
 
 async function sampleMatch(id, rugby: RugbyService, telega: TelegaService): Promise<any> {
   const match = await rugby.getMatch(id);
+  await telega.loadChannels();
   await telega.publishMessage(formatMatch(match));
+
   return {
     txt: formatMatch(match),
     match

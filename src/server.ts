@@ -6,7 +6,6 @@ import {TelegaService} from "./telega-service";
 const main = async () => {
   const rugby = new RugbyService();
   const telega = new TelegaService();
-  await telega.startListenUpdates();
 
   // create http app
   const app = App(Number(process.env.PORT), rugby, telega);
@@ -25,11 +24,7 @@ const main = async () => {
     console.log('Closing http server.');
     server.close(() => {
       console.log('Http server closed.');
-      telega.stopListenUpdates()
-        .then(() => {
-          console.log('Telega service stopped.');
-          process.exit(0);
-        });
+      process.exit(0);
     });
   }
 

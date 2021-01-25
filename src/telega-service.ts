@@ -6,8 +6,6 @@ import TelegramBot from "node-telegram-bot-api";
 export class TelegaService {
   private readonly bot = new TelegramBot(process.env.TOKEN_TELEGRAM!, {polling: false});
   private readonly channels: UniqueIdsStorage;
-  private isListening = false;
-  private _intervalId?: NodeJS.Timeout;
 
   constructor() {
     this.channels = new UniqueIdsStorage('channels');
@@ -32,28 +30,6 @@ export class TelegaService {
     return this.channels.persist();
   }
 
-  async startListenUpdates(): Promise<void> {
-    if (this.isListening) return;
-
-    await this.loadChannels();
-    this.isListening = true;
-    await this.bot.startPolling()
-    this.bot.on('message', (msg) => {
-      this.channels.add(msg.chat.id);
-    });
-    this._intervalId = setInterval(() => {
-      this.channels.persist().catch(console.error)
-    }, 3000);
-  }
-
-  async stopListenUpdates(): Promise<void> {
-    this.isListening = false;
-    await this.bot.stopPolling();
-    this.bot.removeAllListeners('message');
-    await this.channels.persist();
-    this._intervalId && clearInterval(this._intervalId)
-  }
-
   async publishMessage(txt: string): Promise<void> {
     let hasDeletedChannels = false;
     for (const channel of this.channels.list()) {
@@ -65,6 +41,7 @@ export class TelegaService {
           }
         });
     }
+
     if (hasDeletedChannels) {
       await this.channels.persist();
     }
