@@ -9,7 +9,7 @@ const main = async () => {
   await telega.startListenUpdates();
 
   // create http app
-  const app = App(3000, rugby, telega);
+  const app = App(Number(process.env.PORT), rugby, telega);
   // app.set('trust proxy', true);
   const server = http.createServer(app);
 
