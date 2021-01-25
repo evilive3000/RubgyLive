@@ -7,7 +7,7 @@ name: Build and Deploy a Container
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   SERVICE: rugby-live
-  REGION: eur3
+  REGION: europe-west1
 
 jobs:
   deploy:
