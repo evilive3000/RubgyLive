@@ -16,4 +16,6 @@ WORKDIR /srv/app
 COPY package*.json ./
 RUN npm install --only=prod && npm cache clean --force
 COPY . .
+RUN echo $PORT
+EXPOSE $PORT
 CMD npm run start:prod
