@@ -9,6 +9,8 @@ import {
 import axios, {AxiosInstance} from "axios";
 import {UniqueIdsStorage} from "./storage";
 
+// todo: при исчерпывании лимита вызовов API прилетает ошибка 429
+
 export class RugbyService {
   private client: AxiosInstance;
 
@@ -52,7 +54,7 @@ export class RugbyService {
 
     for (const {id, season} of comps) {
       const data = await this.getFixtures(id, season);
-      fixtures.push(...data)
+      fixtures.push(...data);
     }
 
     return fixtures;

@@ -4,6 +4,7 @@ import {RugbyService} from "./rugby-service";
 import {TelegaService} from "./telega-service";
 import {RugbyMatch} from "./types";
 import {formatMatch} from "./formatter";
+import {AxiosError} from "axios";
 
 async function checkMatches(rugby: RugbyService, telega: TelegaService) {
   const ids = await rugby.detectPlayedGames();
@@ -54,6 +55,15 @@ const App = (port: number, rugby: RugbyService, telega: TelegaService): Express 
   });
 
   app.get('/', (req: Request, res: Response) => res.json({ok: true, now: new Date()}))
+
+  app.use((err: AxiosError, req: Request, res: Response, next: NextFunction) => {
+    if (err.isAxiosError) {
+      console.error(err.response?.data);
+      return res.status(err.response?.status || 500).json(err.response?.data);
+    }
+
+    next(err);
+  });
 
   return app;
 };
