@@ -4,10 +4,10 @@ import {
   ApiResponseMatch,
   RugbyCompetition,
   RugbyFixture,
-  RugbyMatch
-} from "./types";
-import axios, {AxiosInstance} from "axios";
-import {UniqueIdsStorage} from "./storage";
+  RugbyMatch,
+} from './types';
+import axios, { AxiosInstance } from 'axios';
+import { UniqueIdsStorage } from './storage';
 
 // todo: при исчерпывании лимита вызовов API прилетает ошибка 429
 
@@ -22,7 +22,7 @@ export class RugbyService {
         'x-rapidapi-key': process.env.TOKEN_RUGBY_API!,
         'x-rapidapi-host': 'rugby-live-data.p.rapidapi.com',
         // 'useQueryString': true
-      }
+      },
     });
   }
 
@@ -30,29 +30,29 @@ export class RugbyService {
     console.info(url);
     return this.client
       .get<T>(url)
-      .then(({data}) => data)
+      .then(({ data }) => data);
   }
 
   async getMatch(matchId: number): Promise<RugbyMatch> {
     return this._get<ApiResponseMatch>(`match/${matchId}`)
-      .then(({results}) => results)
+      .then(({ results }) => results);
   }
 
   async getFixtures(competitionId: number, season: string | number): Promise<RugbyFixture[]> {
     return this._get<ApiResponseFixtures>(`fixtures/${competitionId}/${season}`)
-      .then(({results}) => results.flat())
+      .then(({ results }) => results.flat());
   }
 
   async getCompetitions(): Promise<RugbyCompetition[]> {
     return this._get<ApiResponseCompetition>(`competitions`)
-      .then(({results}) => results);
+      .then(({ results }) => results);
   }
 
   async getAllFixtures(): Promise<RugbyFixture[]> {
     const comps = await this.getCompetitions();
     const fixtures: RugbyFixture[] = [];
 
-    for (const {id, season} of comps) {
+    for (const { id, season } of comps) {
       const data = await this.getFixtures(id, season);
       fixtures.push(...data);
     }
@@ -67,9 +67,9 @@ export class RugbyService {
     const changed = new Set<number>();
     const fixtures = await this.getAllFixtures();
 
-    for (const {id, status} of fixtures) {
+    for (const { id, status } of fixtures) {
       // если матч завершился или отменен
-      if (["Result", "Cancelled"].includes(status)) {
+      if (['Result', 'Cancelled'].includes(status)) {
         // пытаемся удалить из локальной базы сохраненных
         // если id там был, то запоминаем его
         notStarted.del(id) && changed.add(id);

@@ -19,7 +19,7 @@ export class UniqueIdsStorage {
   async persist(): Promise<UniqueIdsStorage> {
     if (!this.isDirty) return this;
 
-    await this.db.doc(this.name).set({json: JSON.stringify(this.list())});
+    await this.db.doc(this.name).set({ json: JSON.stringify(this.list()) });
 
     this.isDirty = false;
 
@@ -33,7 +33,7 @@ export class UniqueIdsStorage {
   }
 
   add(id: number): this {
-    this.isDirty ||= !this.storage.has(id)
+    this.isDirty ||= !this.storage.has(id);
     this.storage.add(id);
     return this;
   }

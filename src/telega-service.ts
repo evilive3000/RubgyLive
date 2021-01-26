@@ -1,10 +1,10 @@
-process.env.NTBA_FIX_319 = "1";
+process.env.NTBA_FIX_319 = '1';
 
-import {UniqueIdsStorage} from "./storage";
-import TelegramBot from "node-telegram-bot-api";
+import { UniqueIdsStorage } from './storage';
+import TelegramBot from 'node-telegram-bot-api';
 
 export class TelegaService {
-  private readonly bot = new TelegramBot(process.env.TOKEN_TELEGRAM!, {polling: false});
+  private readonly bot = new TelegramBot(process.env.TOKEN_TELEGRAM!, { polling: false });
   private readonly channels: UniqueIdsStorage;
 
   constructor() {
@@ -24,7 +24,7 @@ export class TelegaService {
           this.channels.add(msg.chat.id);
         }
       }
-      updates = await this.bot.getUpdates({offset: lastUpdateId + 1});
+      updates = await this.bot.getUpdates({ offset: lastUpdateId + 1 });
     }
 
     return this.channels.persist();
@@ -34,7 +34,7 @@ export class TelegaService {
     let hasDeletedChannels = false;
     for (const channel of this.channels.list()) {
       await this.bot
-        .sendMessage(channel, txt, {parse_mode: 'Markdown'})
+        .sendMessage(channel, txt, { parse_mode: 'Markdown' })
         .catch(err => {
           if (err.response.statusCode === 403) {
             hasDeletedChannels = hasDeletedChannels || this.channels.del(channel);

@@ -1,7 +1,7 @@
 import http from 'http';
 import App from './app';
-import {RugbyService} from "./rugby-service";
-import {TelegaService} from "./telega-service";
+import { RugbyService } from './rugby-service';
+import { TelegaService } from './telega-service';
 
 const main = async () => {
   const rugby = new RugbyService();
@@ -26,7 +26,7 @@ const main = async () => {
       console.log('Http server closed.');
       process.exit(0);
     });
-  }
+  };
 
   process.on('SIGTERM', shutdown);
   process.on('SIGINT', shutdown);
